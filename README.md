@@ -1,5 +1,7 @@
 # technical-test
+This is a product list app developed in vue 3 with typescript that shows a product list and allows pagination, sorting and filter by discount. 
 
+This is app is also accessible by keyboard.
 ## Project setup
 ```
 npm install
@@ -18,11 +20,6 @@ npm run backend
 ### Compiles and minifies for production
 ```
 npm run build
-```
-
-### Run your unit tests
-```
-npm run test:unit
 ```
 
 ### Lints and fixes files

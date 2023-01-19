@@ -25,22 +25,7 @@ const getters: GetterTree<ProductsState, StateInterface> = {
     return productsFiltered.sort(
       (a: Products, b: Products) => a.discount.value - b.discount.value
     );
-  },
-  getProductsSortedByDiscount(state: ProductsState, getters): Products[] {
-    return getters.getProductsWithDiscount.sort(
-      (a: Products, b: Products) => b.discount.value - a.discount.value 
-    );
-  },
-  getProductsActive(state: ProductsState, getters): Products[] {
-    let productsFiltered = []
-    productsFiltered = getters.getProductsList.filter(
-      (filter: Products) => filter.isActive && filter.isActive === true
-    );
-    return productsFiltered;
-  },
-  getProductsFeatured(state: ProductsState): Products[] {
-    return state.products;
-  },
+  }
 };
 
 export default getters;

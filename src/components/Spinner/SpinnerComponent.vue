@@ -26,8 +26,8 @@ export default defineComponent({
   position: relative;
 
   &__loading {
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #3498db; /* Blue */
+    border: 4px solid @spiner-border;
+    border-top: 4px solid @spiner-color; 
     border-radius: 50%;
     width: 20px;
     height: 20px;

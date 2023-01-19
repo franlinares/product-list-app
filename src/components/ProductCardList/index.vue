@@ -1,6 +1,6 @@
 <template>
   <div class="product-container" v-if="displayedProducts">
-    <ul class="product-card-list">
+    <ul class="product-card-list">  
       <li
         class="product-card-list__item-container"
         v-for="product in displayedProducts"
@@ -28,16 +28,17 @@
     />
   </div>
 
-  <SpinnerComponent :loading="loading" />
+  <SpinnerComponent v-else :loading="loading" />
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref, ComputedRef } from "vue";
 import ProductCard from "@/components/ProductCardList/ProductCard.vue";
 import { useRoute } from "vue-router";
 import { Products } from "@/interfaces/products";
 import PaginationComponent from "@/components/Pagination/PaginationComponent.vue";
 import SpinnerComponent from "@/components/Spinner/SpinnerComponent.vue";
+import { useProductsStore } from "../../composables/useProductsStore";
 
 export default defineComponent({
   name: "ProductCardList",
@@ -60,19 +61,42 @@ export default defineComponent({
   },
   setup(props) {
     const route = useRoute();
+    const { getProductsWithDiscount, getProductsList } = useProductsStore();
+    let removedDiscounted = ref<boolean>(false);
+
+    const productsWithDiscount: ComputedRef<Products[]> = computed(
+      () => getProductsWithDiscount.value
+    );
+
+    const productsFeatured: ComputedRef<Products[]> = computed(
+      () => getProductsList.value
+    );
+
+    const getRidOfDiscount = (value: boolean) => {
+      removedDiscounted.value = value;  
+    };
+
+    const productsOptions = computed((): Array<Products> => {
+      if (props.showDiscounted) {
+        return productsWithDiscount.value;
+      }else {
+        return productsFeatured.value;
+      }
+    });
+
     const currentPage = computed((): number => {
       return Number(route.query.page || "1");
     });
 
     const maxPage = computed((): number => {
-      return Math.ceil(props.products.length / 15);
+      return Math.ceil(productsOptions.value.length / 15);
     });
 
     const displayedProducts = computed((): Array<Products> => {
       const pageNumber = currentPage.value;
       const firstProductsIndex = (pageNumber - 1) * 15;
       const lastProductsIndex = pageNumber * 15;
-      return props.products.slice(firstProductsIndex, lastProductsIndex);
+      return productsOptions.value.slice(firstProductsIndex, lastProductsIndex);
     });
 
     const loading = computed((): boolean => (props.products ? false : true));
@@ -81,7 +105,12 @@ export default defineComponent({
       displayedProducts,
       currentPage,
       maxPage,
-      loading
+      loading,
+      removedDiscounted,
+      productsWithDiscount,
+      getRidOfDiscount,
+      productsOptions,
+      productsFeatured
     };
   },
 });
@@ -96,10 +125,6 @@ export default defineComponent({
 @one-product-card: 287px;
 
 .product-container {
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: space-between;
-  // height: 100%;
   margin: auto;
 
   .product-card-list {
@@ -131,9 +156,6 @@ export default defineComponent({
       width: 279px; //279px para 5
       box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
       border-radius: 12px;
-      //background-color: @background-color;
-      // min-height: 404px;
-      // height: auto;
     }
   }
 

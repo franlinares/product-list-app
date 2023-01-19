@@ -1,14 +1,17 @@
 <template>
   <div class="product-view">
-  <div class="product-view__sorting-filtering">
-    <SortComponent
-      @products-by-minor="isSortedMinor"
-      @products-by-major="isSortedMajor"
+    <HeaderComponent />
+    <div class="product-view__sorting-filtering">
+      <SortComponent
+        @products-by-minor="isSortedMinor"
+        @products-by-major="isSortedMajor"
+      />
+      <FilterDiscount @products-by-discount="isDiscounted" />
+    </div>
+    <ProductCardList
+      :products="displayedProducts"
+      :show-discounted="showDiscounted"
     />
-
-    <FiltersComponent @products-by-discount="isDiscounted" @products-featured="isFeatured" @products-by-active="isActive"  />
-  </div>
-    <ProductCardList :products="displayedProducts" :show-discounted="showDiscounted" />
   </div>
 </template>
 
@@ -16,22 +19,20 @@
 import { defineComponent, onMounted, computed, ref, ComputedRef } from "vue";
 import ProductCardList from "@/components/ProductCardList/index.vue";
 import { useProductsStore } from "../composables/useProductsStore";
-import FiltersComponent from '@/components/Filter/index.vue'
 import SortComponent from "@/components/Sort/SortComponent.vue";
+import FilterDiscount from '@/components/Filter/FilterDiscount.vue';
 import { Products } from "@/interfaces/products";
+import HeaderComponent from "@/components/header/index.vue"
 
 export default defineComponent({
   name: "ProductView",
-  components: { ProductCardList, SortComponent, FiltersComponent },
+  components: { ProductCardList, SortComponent, FilterDiscount, HeaderComponent },
   setup() {
     const {
       fetchProducts,
       getProductsList,
       getProductsSortedMinor,
-      getProductsSortedMajor,
-      getProductsWithDiscount,
-      getProductsActive,
-      getProductsFeatured
+      getProductsSortedMajor
     } = useProductsStore();
 
     onMounted(() => {
@@ -41,8 +42,6 @@ export default defineComponent({
     let showSortedMinor = ref<boolean>(false);
     let showSortedMajor = ref<boolean>(false);
     let showDiscounted = ref<boolean>(false);
-    let showFeatured = ref<boolean>(false);
-    let showActive = ref<boolean>(false);
 
     const products: ComputedRef<Products[]> = computed(
       () => getProductsList.value
@@ -56,20 +55,6 @@ export default defineComponent({
       () => getProductsSortedMajor.value
     );
 
-    const productsWithDiscount: ComputedRef<Products[]> = computed(
-      () => getProductsWithDiscount.value
-    );
-
-    const productsActive: ComputedRef<Products[]> = computed(
-      () => getProductsActive.value
-    );
-
-    const productsFeatured: ComputedRef<Products[]> = computed(
-      () => getProductsFeatured.value
-    );
-
-    console.log(productsActive)
-
     const isSortedMinor = () => {
       showSortedMinor.value = true;
       showSortedMajor.value = false;
@@ -80,31 +65,17 @@ export default defineComponent({
       showSortedMinor.value = false;
     };
 
-    const isDiscounted = () => {
-      showDiscounted.value = true;
-    };
-
-    const isFeatured = () => {
-      showFeatured.value = true;
-    };
-
-    const isActive = () => {
-      showActive.value = true;
+    const isDiscounted = (value: boolean) => {
+      showDiscounted.value = value;
     };
 
     const displayedProducts = computed((): Products[] => {
-      switch(true) {
+      switch(true || false) {
         case showSortedMinor.value:
           return productsSortedMinor.value;
         case showSortedMajor.value:
           return productsSortedMajor.value;
-        case showDiscounted.value:
-          return productsWithDiscount.value;
-        case showFeatured.value:
-          return productsFeatured.value;
-        case showActive.value:
-          return productsActive.value;
-        default: 
+        default:
           return products.value
       }
     });
@@ -112,25 +83,20 @@ export default defineComponent({
     return {
       products,
       productsSortedMinor,
-      productsWithDiscount,
-      productsActive,
-      productsFeatured,
       displayedProducts,
       showSortedMinor,
       showSortedMajor,
       showDiscounted,
-      showFeatured,
-      showActive,
       isSortedMinor,
       isSortedMajor,
-      isDiscounted,
-      isFeatured,
-      isActive
+      isDiscounted
     };
   },
 });
 </script>
 <style scoped lang="less">
+@import "../style/products-variables.less";
+@import "../style/media-queries.less";
 .product-view {
   height: 100vh;
   max-width: 1436px;
@@ -140,6 +106,11 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
+    @media @m-query-mobile {
+      width: 100%;
+      justify-content: center;
+    }
   }
 }
 </style>
