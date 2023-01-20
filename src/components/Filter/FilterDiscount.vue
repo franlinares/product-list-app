@@ -12,8 +12,8 @@
         class="filter-discount__link"
         @click="discountedProducts"
       >
-        <label for="name" class="filter-discount__switch">
-          <input id="name" type="checkbox" />
+        <label for="discount" class="filter-discount__switch">
+          <input id="discount" type="checkbox" />
           <span class="filter-discount__slider filter-discount__round"></span>
         </label>
       </a>

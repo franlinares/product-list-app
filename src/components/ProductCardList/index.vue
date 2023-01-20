@@ -27,8 +27,9 @@
       :max-page="maxPage"
     />
   </div>
-
-  <SpinnerComponent v-else :loading="loading" />
+  <div v-else>
+    <SpinnerComponent  :loading="loading" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -62,7 +63,6 @@ export default defineComponent({
   setup(props) {
     const route = useRoute();
     const { getProductsWithDiscount, getProductsList } = useProductsStore();
-    let removedDiscounted = ref<boolean>(false);
 
     const productsWithDiscount: ComputedRef<Products[]> = computed(
       () => getProductsWithDiscount.value
@@ -71,10 +71,6 @@ export default defineComponent({
     const productsFeatured: ComputedRef<Products[]> = computed(
       () => getProductsList.value
     );
-
-    const getRidOfDiscount = (value: boolean) => {
-      removedDiscounted.value = value;  
-    };
 
     const productsOptions = computed((): Array<Products> => {
       if (props.showDiscounted) {
@@ -106,9 +102,7 @@ export default defineComponent({
       currentPage,
       maxPage,
       loading,
-      removedDiscounted,
       productsWithDiscount,
-      getRidOfDiscount,
       productsOptions,
       productsFeatured
     };

@@ -20,8 +20,6 @@ export const useProductsStore = () => {
 
       getProductsSortedByDiscount: computed( () => store.getters['products/getProductsSortedByDiscount']),
 
-      getProductsActive: computed( () => store.getters['products/getProductsActive']),
-
       getProductsFeatured: computed( () => store.getters['products/getProductsFeatured']),
 
       // Actions
