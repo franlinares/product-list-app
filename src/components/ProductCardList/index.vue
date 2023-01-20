@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, ComputedRef } from "vue";
+import { defineComponent, computed, ComputedRef } from "vue";
 import ProductCard from "@/components/ProductCardList/ProductCard.vue";
 import { useRoute } from "vue-router";
 import { Products } from "@/interfaces/products";
